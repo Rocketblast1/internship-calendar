@@ -1,0 +1,29 @@
+td,th{
+    border: 1px solid red;
+    width: calc(100%/7);
+    min-width: 7fr;
+}
+tr{
+    height: 50px
+}
+button{
+    display: inline;
+    position: relative;
+}
+.calendar-grid-container{
+    display: grid;
+    grid-template-columns: 6% auto;
+    grid-template-rows: 50px auto;
+}
+.hour-scale{
+    grid-area: 2/1/2/2;
+    height: 100%
+}
+.hour-scale.td{
+   height: 10px;
+   border: 1px solid black;
+}
+.calendar-grid{
+    width: 100%;
+    grid-area: 2/2/2/3;
+}
