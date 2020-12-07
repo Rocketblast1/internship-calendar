@@ -1,109 +1,65 @@
-import React, { useState, useEffect } from "react";
-import "./Table.css";
-import _ from "lodash";
+import React from "react";
 import moment from "moment";
-import { Modal, Input } from "antd";
+import { fullDateFormat, today, ddmmyyyy } from "./Calendar";
 
-export default function Table() {
-  const [state, setstate] = useState({
-    today: moment(),
-  });
-  const weekDays = moment.weekdaysShort();
-  let dayCol = _.range(0, 7);
-  let hours = _.range(0, 24);
-
-  useEffect(() => {
-    genWeek();
-  }, [state]);
-
-  const addEvent = (hour, day) => {
-    Modal.confirm({
-      content: (
-        <div>
-          {hour} : {day}
-          <Input />
-        </div>
-      ),
-      onOk() {
-        console.log("OK");
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
-  };
-  const genWeek = () => {
-    let currentWeek = state.today.clone()
-    return weekDays.map((day, index) => {
-      return (
-        <th>
-          {day} {currentWeek.startOf("week").add(index, "d").date()}
-        </th>
-      );
-    });
-  };
-
+export const Table = (props) => {
+  const { hours, dayCol, addEvent, referenceDay, getCellValue } = props;
+  const weekDays = moment.weekdays();
   return (
-    <div>
-      <button
-          onClick={() => {
-            let temp = state.today.clone()
-            setstate({
-              ...state,
-              currentWeek: temp.startOf('week').subtract(1, "week").week(),
-            });
-            console.log(state.currentWeek)
+    <table className="calendar-grid">
+      {/* Generates the Header dates */}
+      <thead>
+        <tr>
+          {weekDays.map((day, index) => {
+            const refDay = moment(referenceDay, fullDateFormat);
+            const dDate = refDay
+              .startOf("week")
+              .add(index, "d")
+              .format(ddmmyyyy);
+            const bgColor = today === dDate ? "#ffa9a9" : "";
+            return (
+              <th style={{ background: bgColor }} key={`day-${index}`}>
+                {day} {dDate}
+              </th>
+            );
+          })}
+        </tr>
+      </thead>
 
-          }}
-        >
-          Previous Week
-        </button>
-        <button> Next Week </button>
-      <div className="calendar-grid-container">
-        {/* Generates the hour scale */}
-        <div className="hour-scale">
-          <table>
-            <tbody>
-              <tr></tr>
-              {hours.map((index) => {
+      <thead></thead>
+      {/* Generates the hours grid */}
+      <tbody>
+        {hours.map((hour, hr) => {
+          return (
+            <tr key={`td-${hr}`}>
+              {dayCol.map((day, index) => {
+                  const cellStyle = {
+                    background: "lightblue",
+                    borderRadius: "4px",
+                    fontSize: "10px",
+                    height: "40px",
+                  };
+                let cellElement = <div/>
+                const cellValue = getCellValue(hour, day);
+
+                if (cellValue) {
+                    cellElement = <div style={cellStyle}>{cellValue}</div>
+                }
                 return (
-                  <tr>
-                    <td>{`${-12 + index}:00`}</td>
-                  </tr>
+                  <td
+                    key={`td-${index}`}
+                    onClick={() => {
+                      addEvent(hour, day);
+                    }}
+                  >
+                    {cellElement}
+                  </td>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-
-        <table className="calendar-grid">
-          {/* Generates the Header dates */}
-          <thead>
-            <tr>{genWeek()}</tr>
-          </thead>
-
-          <thead></thead>
-          {/* Generates the hours grid */}
-          <tbody>
-            {hours.map((hour) => {
-              return (
-                <tr>
-                  {dayCol.map((day) => {
-                    return (
-                      <td
-                        onClick={() => {
-                          addEvent(hour, day);
-                          moment().set("month", 3);
-                        }}
-                      ></td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
-}
+};

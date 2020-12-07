@@ -1,10 +1,10 @@
 import {Link, Route, Switch} from "react-router-dom";
-import Table from "../Table";
+import Calendar from "../Calendar";
 
 function App() {
   return (
     <div className="App">
-      <Table/>
+      <Calendar/>
     </div>
   );
 }
