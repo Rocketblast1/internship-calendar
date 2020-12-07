@@ -37,7 +37,7 @@ export const Table = (props) => {
                     background: "lightblue",
                     borderRadius: "4px",
                     fontSize: "10px",
-                    height: "40px",
+                    height: "50px",
                   };
                 let cellElement = <div/>
                 const cellValue = getCellValue(hour, day);

@@ -18,9 +18,13 @@ export default class Calendar extends Component {
     weeklyEventList: []
   }
   getCellValue = (hour, day) =>{
+    const {referenceDay} = this.state;
     const weeklyEventList = this.state.weeklyEventList;
+    const currentDate = moment(referenceDay, fullDateFormat).add(day, "d");
+    const selectedDate = currentDate.format(ddmmyyyy);
+    const selectedHour = moment(hour, "H").format("hh:mm");
     const foundElements = weeklyEventList.find(e => {
-      return e.hour === hour && e.day === day
+      return e.eventStartTime === selectedHour && e.eventDate === selectedDate
     });
 
     if (foundElements){
@@ -29,7 +33,8 @@ export default class Calendar extends Component {
       const title = foundElements.eventName;
       const eventDuration = end.diff(start, 'hours')
       const eventElement = <div>
-        {title} {eventDuration}
+        {title} <br/>
+        {start.format('hh:mm a')}-{end.format('hh:mm a')}
       </div>;
       return eventElement;
     }
